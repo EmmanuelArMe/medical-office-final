@@ -20,5 +20,10 @@ def eliminar_paciente(db: Session, documento: int):
     if paciente:
         db.delete(paciente)
         db.commit()
-        return paciente
-    return None
+
+def actualizar_paciente(db: Session, paciente: Paciente, paciente_data: PacienteCreate) -> Paciente | None:
+    for key, value in paciente_data.model_dump().items():
+        setattr(paciente, key, value)
+    db.commit()
+    db.refresh(paciente)
+    return paciente

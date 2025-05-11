@@ -1,22 +1,31 @@
 from sqlalchemy.orm import Session
 from app.models.consultorio import Consultorio
+from app.schemas.consultorio import ConsultorioCreate
 
-def crear_consultorio(db: Session, consultorio: str):
-    db.add(consultorio)
+def crear_consultorio(db: Session, consultorio_data: ConsultorioCreate) -> Consultorio:
+    nuevo_consultorio = Consultorio(**consultorio_data.model_dump())
+    db.add(nuevo_consultorio)
     db.commit()
-    db.refresh(consultorio)
-    return consultorio
+    db.refresh(nuevo_consultorio)
+    return nuevo_consultorio
 
-def obtener_todos_consultorios(db: Session):
-    return db.query(Consultorio).all()
-
-def obtener_consultorio_por_id(db: Session, consultorio_id: int):
+def obtener_consultorio_por_id(db: Session, consultorio_id: int) -> Consultorio | None:
     return db.query(Consultorio).filter(Consultorio.id == consultorio_id).first()
 
-def eliminar_consultorio(db: Session, consultorio_id: int):
+def obtener_consultorios(db: Session, skip: int, limit: int) -> list[Consultorio]:
+    return db.query(Consultorio).offset(skip).limit(limit).all()
+
+def eliminar_consultorio(db: Session, consultorio_id: int) -> Consultorio | None:
     consultorio = obtener_consultorio_por_id(db, consultorio_id)
     if consultorio:
         db.delete(consultorio)
         db.commit()
-        return consultorio
-    return None
+
+def actualizar_consultorio(db: Session, consultorio_id: int, consultorio_data: str) -> Consultorio | None:
+    consultorio = obtener_consultorio_por_id(db, consultorio_id)
+    if consultorio:
+        for key, value in consultorio_data.model_dump().items():
+            setattr(consultorio, key, value)
+        db.commit()
+        db.refresh(consultorio)
+    return consultorio
