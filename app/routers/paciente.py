@@ -3,7 +3,6 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from fastapi import status
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError
 from app.db.database import SessionLocal
 from app.schemas.paciente import PacienteCreate, PacienteResponse
 from app.services import paciente as service
@@ -19,38 +18,26 @@ def get_db():
 
 @router.post("/pacientes", response_model=PacienteResponse)
 def crear_paciente(paciente: PacienteCreate, db: Session = Depends(get_db)):
-    try:
-        # Llamada al servicio para registrar el paciente
-        paciente = service.registrar_paciente(db, paciente)
 
-        # Convertir a modelo Pydantic
-        paciente_creado = PacienteResponse.model_validate(paciente)
+    # Llamada al servicio para registrar el paciente
+    paciente = service.crear_paciente(db, paciente)
 
-        # Convertir a JSON serializable
-        paciente_response_json = jsonable_encoder(paciente_creado)
+    # Convertir a modelo Pydantic
+    paciente_creado = PacienteResponse.model_validate(paciente)
 
-        return JSONResponse(
-            content={
-                "message": "Paciente creado correctamente",
-                "response": paciente_response_json
-            },
-            status_code=status.HTTP_201_CREATED
-        )
-    
-    # Manejar el error de integridad, específicamente el de duplicados
-    except IntegrityError as e:
-        
-        db.rollback()  # Es importante para deshacer los cambios y liberar la sesión
+    # Convertir a JSON serializable
+    paciente_response_json = jsonable_encoder(paciente_creado)
 
-        return JSONResponse(
-            content={
-                "message": f"El documento {paciente.documento} ya está registrado. Por favor, verifique el documento."
-            },
-            status_code=status.HTTP_400_BAD_REQUEST  # Código de estado para solicitud incorrecta
-        )
+    return JSONResponse(
+        content={
+            "message": "Paciente creado correctamente",
+            "response": paciente_response_json
+        },
+        status_code=status.HTTP_201_CREATED
+    )
 
 @router.get("/pacientes", response_model=list[PacienteResponse])
-def obtener_pacientes(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+def obtener_pacientes(skip: int, limit: int, db: Session = Depends(get_db)):
 
     # Llamada al servicio para listar los 10 primeros pacientes
     pacientes = service.listar_pacientes(db, skip=skip, limit=limit)
