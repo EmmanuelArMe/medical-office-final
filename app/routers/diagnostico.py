@@ -54,3 +54,13 @@ def eliminar_diagnostico(diagnostico_id: int, db: Session = Depends(get_db)):
         content={"message": f"Diagnóstico con ID {diagnostico_id} eliminado correctamente", "response": jsonable_encoder(diagnostico)},
         status_code=status.HTTP_200_OK
     )
+
+@router.put("/diagnostico/{diagnostico_id}", response_model=DiagnosticoResponse)
+def actualizar_diagnostico(diagnostico_id: int, diagnostico: DiagnosticoCreate, db: Session = Depends(get_db)):
+    diagnostico_actualizado = service.actualizar_diagnostico(db, diagnostico_id, diagnostico)
+    return JSONResponse(
+        content={
+            "message": f"Consultorio con ID {diagnostico_id} actualizado correctamente",
+            "response": jsonable_encoder(diagnostico_actualizado)
+        }
+    )
