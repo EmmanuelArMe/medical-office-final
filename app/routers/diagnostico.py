@@ -54,3 +54,23 @@ def eliminar_diagnostico(diagnostico_id: int, db: Session = Depends(get_db)):
         content={"message": f"Diagnóstico con ID {diagnostico_id} eliminado correctamente", "response": jsonable_encoder(diagnostico)},
         status_code=status.HTTP_200_OK
     )
+
+def actualizar_diagnostico(db: Session, diagnostico_id: int, diagnostico_data: schemas.DiagnosticoCreate):
+    diagnostico = db.query(models.Diagnostico).filter(models.Diagnostico.id == diagnostico_id).first()
+    if not diagnostico:
+        return None
+    diagnostico.descripcion = diagnostico_data.descripcion
+    diagnostico.cita_id = diagnostico_data.cita_id
+    db.commit()
+    db.refresh(diagnostico)
+    return diagnostico
+
+@router.put("/diagnostico/{diagnostico_id}", response_model=DiagnosticoResponse)
+def actualizar_diagnostico(diagnostico_id: int, diagnostico: DiagnosticoCreate, db: Session = Depends(get_db)):
+    diagnostico_actualizado = service.actualizar_diagnostico(db, diagnostico_id, diagnostico)
+    return JSONResponse(
+        content={
+            "message": f"Consultorio con ID {diagnostico_id} actualizado correctamente",
+            "response": jsonable_encoder(diagnostico_actualizado)
+        }
+    )
