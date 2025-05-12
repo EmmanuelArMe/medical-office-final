@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.diagnostico import Diagnostico
-from app.schemas.consultorio import DiagnosticoCreate
+from app.schemas.diagnostico import DiagnosticoCreate
 
 def crear_diagnostico(db: Session, diagnostico_data: DiagnosticoCreate) -> Diagnostico:
     nuevo_diagnostico = Diagnostico(**diagnostico_data.model_dump())

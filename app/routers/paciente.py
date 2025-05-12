@@ -18,95 +18,46 @@ def get_db():
 
 @router.post("/pacientes", response_model=PacienteResponse)
 def crear_paciente(paciente: PacienteCreate, db: Session = Depends(get_db)):
-
-    # Llamada al servicio para registrar el paciente
-    paciente = service.crear_paciente(db, paciente)
-
-    # Convertir a modelo Pydantic
-    paciente_creado = PacienteResponse.model_validate(paciente)
-
-    # Convertir a JSON serializable
-    paciente_response_json = jsonable_encoder(paciente_creado)
-
+    nuevo_paciente = service.crear_paciente(db, paciente)
     return JSONResponse(
         content={
-            "message": "Paciente creado correctamente",
-            "response": paciente_response_json
-        },
-        status_code=status.HTTP_201_CREATED
+            "message": "Paciente creado correctamente", "response": jsonable_encoder(nuevo_paciente)},
+            status_code=status.HTTP_201_CREATED
+    )
+
+@router.get("/pacientes/{documento}", response_model=PacienteResponse)
+def obtener_paciente_por_documento(documento: int, db: Session = Depends(get_db)):
+    paciente = service.obtener_paciente_por_documento(db, documento=documento)
+    return JSONResponse(
+        content={
+            "message": "Paciente obtenido correctamente", "response": jsonable_encoder(paciente)}, 
+            status_code=status.HTTP_200_OK
     )
 
 @router.get("/pacientes", response_model=list[PacienteResponse])
 def obtener_pacientes(skip: int, limit: int, db: Session = Depends(get_db)):
-
-    # Llamada al servicio para listar los 10 primeros pacientes
-    pacientes = service.listar_pacientes(db, skip=skip, limit=limit)
-
-    # Convertir a JSON serializable
-    pacientes_response = jsonable_encoder(pacientes)
-
-    return JSONResponse(
-        content={
-            "message": "Lista de los primeros 10 pacientes obtenida correctamente",
-            "response": pacientes_response
-        },
-        status_code=status.HTTP_200_OK
-    )
-
-@router.get("/pacientes/{documento}", response_model=PacienteResponse)
-def obtener_paciente(documento: int, db: Session = Depends(get_db)):
-    
-    # Llamada al servicio para obtener un paciente por documento
-    paciente = service.obtener_paciente(db, documento=documento)
-
-    # Verificar si el paciente fue encontrado
-    if paciente is None:
-        return JSONResponse(
-            content={
-                "message": f"El paciente con el documento {documento} no fue encontrado. Por favor, verifique el documento."
-            },
-            status_code=status.HTTP_404_NOT_FOUND
-        )
-
-    # Convertir a modelo Pydantic
-    paciente_response = PacienteResponse.model_validate(paciente)
-
-    # Convertir a JSON serializable
-    paciente_response_json = jsonable_encoder(paciente_response)
-
-    return JSONResponse(
-        content={
-            "message": "Paciente obtenido correctamente",
-            "response": paciente_response_json
-        },
+    return JSONResponse( 
+        content={"message": "Lista de pacientes obtenida correctamente", "response": jsonable_encoder(service.obtener_pacientes(db, skip, limit))},
         status_code=status.HTTP_200_OK
     )
 
 @router.delete("/pacientes/{documento}", response_model=PacienteResponse)
 def eliminar_paciente(documento: int, db: Session = Depends(get_db)):
-
-    # Llamada al servicio para eliminar un paciente por documento
-    paciente = service.eliminar_paciente(db, documento=documento)
-
-    # Verificar si el paciente fue eliminado anteriormente
-    if paciente is None:
-        return JSONResponse(
-            content={
-                "message": f"El paciente con el documento {documento} que desea eliminar no fue encontrado. Por favor, verifique el documento."
-            },
-            status_code=status.HTTP_404_NOT_FOUND
-        )
-
-    # Convertir a modelo Pydantic
-    paciente_reposonse = PacienteResponse.model_validate(paciente)
-
-    # Convertir a JSON serializable
-    paciente_response_json = jsonable_encoder(paciente_reposonse)
-
+    service.eliminar_paciente(db, documento=documento)
     return JSONResponse(
         content={
-            "message": f"El paciente con el documento {documento} fue eliminado correctamente.",
-            "response": paciente_response_json
+            "message": f"El paciente con el documento {documento} fue eliminado correctamente."
+        },
+        status_code=status.HTTP_200_OK
+    )
+
+@router.put("/pacientes/{documento}", response_model=PacienteResponse)
+def actualizar_paciente(documento: int, paciente: PacienteCreate, db: Session = Depends(get_db)):
+    paciente_actualizado = service.actualizar_paciente(db, documento, paciente)
+    return JSONResponse(
+        content={
+            "message": f"Paciente con el documento {documento} actualizado correctamente",
+            "response": jsonable_encoder(paciente_actualizado)
         },
         status_code=status.HTTP_200_OK
     )

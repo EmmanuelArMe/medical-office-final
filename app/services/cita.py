@@ -39,6 +39,7 @@ def crear_cita(db: Session, cita_data: CitaCreate):
         extract("day", Cita.fecha) == cita_data.fecha.day
     ).first()
     if cita_existente:
+        db.rollback()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="El paciente ya tiene una cita el mismo dia"
@@ -47,6 +48,7 @@ def crear_cita(db: Session, cita_data: CitaCreate):
     # Crear la cita
     nueva_cita = cita_repository.crear_cita(db, cita_data)
     if not nueva_cita:
+        db.rollback()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Error al crear la cita"
