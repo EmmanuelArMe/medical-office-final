@@ -10,8 +10,8 @@ def crear_diagnostico(db: Session, diagnostico_data: DiagnosticoCreate):
 def obtener_diagnostico(db: Session, diagnostico_id: int):
     return diagnostico_repository.obtener_diagnostico(db, diagnostico_id)
 
-def listar_diagnosticos(db: Session):
-    return diagnostico_repository.listar_diagnosticos(db)
+def obtener_diagnosticos(db: Session):
+    return diagnostico_repository.obtener_diagnosticos(db)
 
 def eliminar_diagnostico(db: Session, diagnostico_id: int):
     return diagnostico_repository.eliminar_diagnostico(db, diagnostico_id)
