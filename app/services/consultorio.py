@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from app.models.consultorio import Consultorio
-from app.schemas.consultorio import ConsultorioCreate
+from app.schemas.consultorio import ConsultorioCreate, ConsultorioUpdate
 from app.repositories import consultorio as consultorio_repository
 
 def crear_consultorio(db: Session, consultorio_data: ConsultorioCreate):
@@ -44,7 +44,7 @@ def eliminar_consultorio(db: Session, consultorio_id: int):
     consultorio_repository.eliminar_consultorio(db, consultorio_id)
     return consultorio
 
-def actualizar_consultorio(db: Session, consultorio_id: int, consultorio_data: ConsultorioCreate):
+def actualizar_consultorio(db: Session, consultorio_id: int, consultorio_data: ConsultorioUpdate):
     consultorio = obtener_consultorio_por_id(db, consultorio_id)
     if not consultorio:
         raise HTTPException(

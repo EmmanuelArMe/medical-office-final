@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app.schemas.horario_medico import HorarioMedicoCreate
+from app.schemas.horario_medico import HorarioMedicoCreate, HorarioMedicoUpdate
 from app.models.horario_medico import HorarioMedico
 from app.repositories import horario_medico as horario_repository
 

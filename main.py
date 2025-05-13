@@ -1,7 +1,13 @@
 from fastapi import FastAPI
 from app.routers import cita, especialidad, paciente, medico, consultorio, diagnostico, horario_medico, historial_medico
 
-app = FastAPI(title="Medical Office API")
+app = FastAPI(
+    title="Medical Office API",
+    version="1.0.0",
+    description="API for managing medical office operations",
+    docs_url="/docs",
+    redoc_url="/redoc"
+)
 
 app.include_router(paciente.router, prefix="/api", tags=["Pacientes"])
 app.include_router(cita.router, prefix="/api", tags=["Citas"])

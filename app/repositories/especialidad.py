@@ -20,13 +20,10 @@ def eliminar_especialidad(db: Session, especialidad_id: int) -> Especialidad | N
     if especialidad:
         db.delete(especialidad)
         db.commit()
-    return especialidad
 
-def actualizar_especialidad(db: Session, especialidad_id: int, especialidad_data: EspecialidadCreate) -> Especialidad | None:
-    especialidad = obtener_especialidad_por_id(db, especialidad_id)
-    if especialidad:
-        for key, value in especialidad_data.model_dump().items():
-            setattr(especialidad, key, value)
-        db.commit()
-        db.refresh(especialidad)
+def actualizar_especialidad(db: Session, especialidad: Especialidad, especialidad_data: EspecialidadCreate) -> Especialidad | None:
+    for key, value in especialidad_data.model_dump().items():
+        setattr(especialidad, key, value)
+    db.commit()
+    db.refresh(especialidad)
     return especialidad

@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 from app.models import Paciente, Medico, Consultorio
 from app.models.cita import Cita
-from app.schemas.cita import CitaCreate
+from app.schemas.cita import CitaCreate, CitaUpdate
 from sqlalchemy.orm import Session
 from app.repositories import cita as cita_repository
 from sqlalchemy import extract
@@ -39,6 +39,7 @@ def crear_cita(db: Session, cita_data: CitaCreate):
         extract("day", Cita.fecha) == cita_data.fecha.day
     ).first()
     if cita_existente:
+        db.rollback()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="El paciente ya tiene una cita el mismo dia"
@@ -47,6 +48,7 @@ def crear_cita(db: Session, cita_data: CitaCreate):
     # Crear la cita
     nueva_cita = cita_repository.crear_cita(db, cita_data)
     if not nueva_cita:
+        db.rollback()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Error al crear la cita"
@@ -90,7 +92,7 @@ def eliminar_cita(db: Session, cita_id: int):
     return cita
 
 
-def actualizar_cita(db: Session, cita_id: int, cita_data: CitaCreate):
+def actualizar_cita(db: Session, cita_id: int, cita_data: CitaUpdate):
     cita = obtener_cita_por_id(db, cita_id)
     if not cita:
         raise HTTPException(
