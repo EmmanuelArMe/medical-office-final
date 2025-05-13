@@ -3,11 +3,11 @@ from app.models.paciente import Paciente
 from app.schemas.paciente import PacienteCreate
 
 def crear_paciente(db: Session, paciente: PacienteCreate):
-    paciente = Paciente(**paciente.model_dump())
-    db.add(paciente)
+    nuevo_paciente = Paciente(**paciente.model_dump())
+    db.add(nuevo_paciente)
     db.commit()
-    db.refresh(paciente)
-    return paciente
+    db.refresh(nuevo_paciente)
+    return nuevo_paciente
 
 def obtener_paciente_por_documento(db: Session, documento: int):
     return db.query(Paciente).filter(Paciente.documento == documento).first()

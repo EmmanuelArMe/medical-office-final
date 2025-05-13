@@ -16,5 +16,7 @@ class ConsultorioCreate(ConsultorioBase):
 class ConsultorioResponse(ConsultorioBase):
     id: int
 
+class ConsultorioUpdate(ConsultorioBase):
+
     class Config:
         orm_mode = True

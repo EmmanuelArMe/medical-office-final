@@ -76,6 +76,7 @@ def upgrade() -> None:
     sa.Column('especialidad_id', sa.Integer(), nullable=True),
     sa.Column('email', sa.String(length=100), nullable=True),
     sa.Column('telefono', sa.String(length=20), nullable=True),
+    sa.Column('documento', sa.String(length=50), nullable=False),
     sa.ForeignKeyConstraint(['especialidad_id'], ['especialidades.id'], ),
     sa.PrimaryKeyConstraint('id')
     )

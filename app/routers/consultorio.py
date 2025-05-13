@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
-from app.schemas.consultorio import ConsultorioCreate, ConsultorioResponse
+from app.schemas.consultorio import ConsultorioCreate, ConsultorioResponse, ConsultorioUpdate
 from app.services import consultorio as service
 from app.db.database import SessionLocal
 from fastapi.encoders import jsonable_encoder
@@ -15,7 +15,12 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/consultorios", response_model=ConsultorioResponse)
+@router.post(
+        "/consultorios",
+        response_model=ConsultorioResponse,
+        summary="Crear consultorio",
+        description="Crea un nuevo consultorio en el sistema."
+)
 def crear_consultorio(consultorio: ConsultorioCreate, db: Session = Depends(get_db)):
     nuevo_consultorio = service.crear_consultorio(db, consultorio)
     return JSONResponse(
@@ -24,7 +29,12 @@ def crear_consultorio(consultorio: ConsultorioCreate, db: Session = Depends(get_
     )
 
 
-@router.get("/consultorios/{consultorio_id}", response_model=ConsultorioResponse)
+@router.get(
+        "/consultorios/{consultorio_id}",
+        response_model=ConsultorioResponse,
+        summary="Obtener consultorio por ID",
+        description="Obtiene un consultorio por su ID."
+)
 def obtener_consultorio_por_id(consultorio_id: int, db: Session = Depends(get_db)):
     consultorio = service.obtener_consultorio_por_id(db, consultorio_id)
     return JSONResponse(
@@ -32,7 +42,12 @@ def obtener_consultorio_por_id(consultorio_id: int, db: Session = Depends(get_db
         status_code=status.HTTP_200_OK
     )
 
-@router.get("/consultorios", response_model=list[ConsultorioResponse])
+@router.get(
+        "/consultorios",
+        response_model=list[ConsultorioResponse],
+        summary="Obtener lista de consultorios",
+        description="Obtiene una lista de consultorios paginada."
+)
 def Obtener_consultorios(skip: int, limit: int, db: Session = Depends(get_db)):
     return JSONResponse(
         content={"message": "Lista de consultorios obtenida correctamente", "response": jsonable_encoder(service.obtener_consultorios(db, skip, limit))},
@@ -40,7 +55,12 @@ def Obtener_consultorios(skip: int, limit: int, db: Session = Depends(get_db)):
     )
 
 
-@router.delete("/consultorios/{consultorio_id}", response_model=ConsultorioResponse)
+@router.delete(
+        "/consultorios/{consultorio_id}",
+        response_model=ConsultorioResponse,
+        summary="Eliminar consultorio",
+        description="Elimina un consultorio por su ID."
+)
 def eliminar_consultorio(consultorio_id: int, db: Session = Depends(get_db)):
     consultorio = service.eliminar_consultorio(db, consultorio_id)
     return JSONResponse(
@@ -51,8 +71,13 @@ def eliminar_consultorio(consultorio_id: int, db: Session = Depends(get_db)):
         status_code=status.HTTP_200_OK
     )
 
-@router.put("/consultorios/{consultorio_id}", response_model=ConsultorioResponse)
-def actualizar_consultorio(consultorio_id: int, consultorio: ConsultorioCreate, db: Session = Depends(get_db)):
+@router.put(
+        "/consultorios/{consultorio_id}",
+        response_model=ConsultorioResponse,
+        summary="Actualizar consultorio",
+        description="Actualiza un consultorio por su ID."
+)
+def actualizar_consultorio(consultorio_id: int, consultorio: ConsultorioUpdate, db: Session = Depends(get_db)):
     consultorio_actualizado = service.actualizar_consultorio(db, consultorio_id, consultorio)
     return JSONResponse(
         content={

@@ -13,5 +13,8 @@ class HorarioMedicoCreate(HorarioMedicoBase):
 class HorarioMedicoResponse(HorarioMedicoBase):
     id: int
 
+class HorarioMedicoUpdate(HorarioMedicoBase):
+    pass
+
     class Config:
         orm_mode = True

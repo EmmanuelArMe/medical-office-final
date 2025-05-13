@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 from app.models import Paciente, Medico, Consultorio
 from app.models.cita import Cita
-from app.schemas.cita import CitaCreate
+from app.schemas.cita import CitaCreate, CitaUpdate
 from sqlalchemy.orm import Session
 from app.repositories import cita as cita_repository
 from sqlalchemy import extract
@@ -92,7 +92,7 @@ def eliminar_cita(db: Session, cita_id: int):
     return cita
 
 
-def actualizar_cita(db: Session, cita_id: int, cita_data: CitaCreate):
+def actualizar_cita(db: Session, cita_id: int, cita_data: CitaUpdate):
     cita = obtener_cita_por_id(db, cita_id)
     if not cita:
         raise HTTPException(

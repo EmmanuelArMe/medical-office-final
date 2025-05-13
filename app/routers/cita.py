@@ -15,7 +15,12 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/citas", response_model=CitaResponse)
+@router.post(
+        "/citas",
+        response_model=CitaResponse,
+        summary="Crear cita",
+        description="Crea una nueva cita en el sistema."
+)
 def crear_cita(cita: CitaCreate, db: Session = Depends(get_db)):
     nueva_cita = service.crear_cita(db, cita)
     return JSONResponse(
@@ -23,7 +28,12 @@ def crear_cita(cita: CitaCreate, db: Session = Depends(get_db)):
         status_code=status.HTTP_201_CREATED
     )
 
-@router.get("/citas/{cita_id}", response_model=CitaResponse)
+@router.get(
+        "/citas/{cita_id}",
+        response_model=CitaResponse,
+        summary="Obtener cita por ID",
+        description="Obtiene una cita por su ID."
+)
 def obtener_cita_por_id(cita_id: int, db: Session = Depends(get_db)):
     cita = service.obtener_cita_por_id(db, cita_id)
     return JSONResponse(
@@ -31,25 +41,38 @@ def obtener_cita_por_id(cita_id: int, db: Session = Depends(get_db)):
         status_code=status.HTTP_200_OK
     )
 
-@router.get("/citas", response_model=list[CitaResponse])
+@router.get(
+        "/citas",
+        response_model=list[CitaResponse],
+        summary="Obtener lista de citas",
+        description="Obtiene una lista de citas paginada."
+)
 def obtener_citas(skip: int, limit: int, db: Session = Depends(get_db)):
     return JSONResponse( 
         content={"message": "Lista de citas obtenida correctamente", "response": jsonable_encoder(service.obtener_citas(db, skip, limit))},
         status_code=status.HTTP_200_OK
     )
 
-@router.delete("/citas/{cita_id}")
+@router.delete(
+        "/citas/{cita_id}",
+        response_model=CitaResponse,
+        summary="Eliminar cita",
+        description="Elimina una cita por su ID."
+)
 def eliminar_cita(cita_id: int, db: Session = Depends(get_db)):
-    service.eliminar_cita(db, cita_id)
+    cita = service.eliminar_cita(db, cita_id)
     return JSONResponse(
-        content={
-            "message": f"Cita con ID {cita_id} eliminada correctamente"
-        },
+        content={"message": f"Cita con ID {cita_id} eliminada correctamente", "response": jsonable_encoder(cita)},
         status_code=status.HTTP_200_OK
     )
 
 
-@router.put("/citas/{cita_id}", response_model=CitaResponse)
+@router.put(
+        "/citas/{cita_id}",
+        response_model=CitaResponse,
+        summary="Actualizar cita",
+        description="Actualiza una cita por su ID."
+)
 def actualizar_cita(cita_id: int, cita: CitaUpdate, db: Session = Depends(get_db)):
     cita_actualizada = service.actualizar_cita(db, cita_id, cita)
     return JSONResponse(
@@ -60,7 +83,12 @@ def actualizar_cita(cita_id: int, cita: CitaUpdate, db: Session = Depends(get_db
         status_code=status.HTTP_200_OK
     )
 
-@router.get("/citas/paciente/{paciente_id}", response_model=list[CitaResponse])
+@router.get(
+        "/citas/paciente/{paciente_id}",
+        response_model=list[CitaResponse],
+        summary="Obtener citas por paciente",
+        description="Obtiene una lista de citas por el ID del paciente."
+)
 def obtener_citas_por_paciente(paciente_id: int, db: Session = Depends(get_db)):
     citas_por_paciente = service.obtener_citas_por_paciente(db, paciente_id)
     return JSONResponse(
@@ -71,7 +99,12 @@ def obtener_citas_por_paciente(paciente_id: int, db: Session = Depends(get_db)):
         status_code=status.HTTP_200_OK
     )
 
-@router.get("/citas/medico/{medico_id}", response_model=list[CitaResponse])
+@router.get(
+        "/citas/medico/{medico_id}",
+        response_model=list[CitaResponse],
+        summary="Obtener citas por médico",
+        description="Obtiene una lista de citas por el ID del médico."
+)
 def obtener_citas_por_medico(medico_id: int, db: Session = Depends(get_db)):
     citas_por_medico = service.obtener_citas_por_medico(db, medico_id)
     return JSONResponse(
@@ -82,7 +115,12 @@ def obtener_citas_por_medico(medico_id: int, db: Session = Depends(get_db)):
         status_code=status.HTTP_200_OK
     )
 
-@router.get("/citas/consultorio/{consultorio_id}", response_model=list[CitaResponse])
+@router.get(
+        "/citas/consultorio/{consultorio_id}",
+        response_model=list[CitaResponse],
+        summary="Obtener citas por consultorio",
+        description="Obtiene una lista de citas por el ID del consultorio."
+)
 def obtener_citas_por_consultorio(consultorio_id: int, db: Session = Depends(get_db)):
     citas_por_consultorio = service.obtener_citas_por_consultorio(db, consultorio_id)
     return JSONResponse(
@@ -93,7 +131,12 @@ def obtener_citas_por_consultorio(consultorio_id: int, db: Session = Depends(get
         status_code=status.HTTP_200_OK
     )
 
-@router.get("/citas/fecha/{fecha}", response_model=list[CitaResponse])
+@router.get(
+        "/citas/fecha/{fecha}",
+        response_model=list[CitaResponse],
+        summary="Obtener citas por fecha",
+        description="Obtiene una lista de citas por la fecha."
+)
 def obtener_citas_por_fecha(fecha: str, db: Session = Depends(get_db)):
     citas_por_fecha = service.obtener_citas_por_fecha(db, fecha)
     return JSONResponse(

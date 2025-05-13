@@ -10,6 +10,7 @@ class Medico(Base):
     especialidad_id = Column(Integer, ForeignKey("especialidades.id"))
     email = Column(String(100))
     telefono = Column(String(20))
+    documento = Column(String(25), unique=True, nullable=False)
 
     especialidad = relationship("Especialidad", back_populates="medicos")
     citas = relationship("Cita", back_populates="medico")

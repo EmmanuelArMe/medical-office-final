@@ -2,7 +2,7 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from app.repositories import paciente as paciente_repository
 from app.models.paciente import Paciente
-from app.schemas.paciente import PacienteCreate
+from app.schemas.paciente import PacienteCreate, PacienteUpdate
 
 def crear_paciente(db: Session, paciente: PacienteCreate):
     # Validar existencia del paciente
@@ -32,7 +32,7 @@ def obtener_paciente_por_documento(db: Session, documento: int):
         )
     return paciente_repository.obtener_paciente_por_documento(db, documento=documento)
     
-def obtener_pacientes(db: Session, skip: int = 0, limit: int = 10):
+def obtener_pacientes(db: Session, skip: int, limit: int):
     # Validar existencia de los pacientes
     pacientes = db.query(Paciente).all()
     if not pacientes:
@@ -58,7 +58,7 @@ def eliminar_paciente(db: Session, documento: int):
     paciente_repository.eliminar_paciente(db, documento=documento)
     return paciente
 
-def actualizar_paciente(db: Session, documento: int, paciente_data: PacienteCreate):
+def actualizar_paciente(db: Session, documento: int, paciente_data: PacienteUpdate):
     # Validar existencia del paciente
     paciente = db.query(Paciente).filter(Paciente.documento == documento).first()
     if not paciente:
