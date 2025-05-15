@@ -52,28 +52,13 @@ def obtener_especialidades(db: Session, skip: int, limit: int):
 
 def eliminar_especialidad(db: Session, id: int):
     # Validar existencia de la especialidad
-    especialidad = db.query(especialidad_repository.Especialidad).filter(
-        especialidad_repository.Especialidad.id == id
-    ).first()
-    if not especialidad:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"La especialidad con el id {id} no fue encontrada. Por favor, verifique el id."
-        )
+    especialidad = obtener_especialidad_por_id(db, id)
     especialidad_repository.eliminar_especialidad(db, id)
     return especialidad
 
 def actualizar_especialidad(db: Session, id: int, especialidad_data: EspecialidadUpdate):
     # Validar existencia de la especialidad
-    especialidad = db.query(especialidad_repository.Especialidad).filter(
-        especialidad_repository.Especialidad.id == id
-    ).first()
-    if not especialidad:
-        db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"La especialidad con el id {id} no fue encontrada. Por favor, verifique el id."
-        )
+    especialidad = obtener_especialidad_por_id(db, id)
     especialidad_actualizada = especialidad_repository.actualizar_especialidad(db, especialidad, especialidad_data)
     if not especialidad_actualizada:
         db.rollback()

@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field, field_validator
 from datetime import date
 from typing import Optional
+from typing import Dict, Any, ClassVar
 
     
 class PacienteBase(BaseModel):
@@ -16,6 +17,21 @@ class PacienteBase(BaseModel):
         if value is None or (isinstance(value, str) and value.strip() == ""):
             raise ValueError(f"El campo '{info.field_name}' es obligatorio.")
         return value
+    
+    model_config: ClassVar[Dict[str, Any]] = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "nombre": "Juan",
+                    "apellido": "Pérez",
+                    "fecha_nacimiento": "1990-01-01",
+                    "documento": "12345678",
+                    "telefono": "123456789",
+                    "email": "example@mail.com"
+                }
+            ]
+        }
+    }
 
 class PacienteCreate(PacienteBase):
     pass

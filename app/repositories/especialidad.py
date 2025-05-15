@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.especialidad import Especialidad
-from app.schemas.especialidad import EspecialidadCreate
+from app.schemas.especialidad import EspecialidadCreate, EspecialidadUpdate
 
 def crear_especialidad(db: Session, especialidad_data: EspecialidadCreate) -> Especialidad:
     nueva_especialidad = Especialidad(**especialidad_data.model_dump())
@@ -21,7 +21,7 @@ def eliminar_especialidad(db: Session, especialidad_id: int) -> Especialidad | N
         db.delete(especialidad)
         db.commit()
 
-def actualizar_especialidad(db: Session, especialidad: Especialidad, especialidad_data: EspecialidadCreate) -> Especialidad | None:
+def actualizar_especialidad(db: Session, especialidad: Especialidad, especialidad_data: EspecialidadUpdate) -> Especialidad | None:
     for key, value in especialidad_data.model_dump().items():
         setattr(especialidad, key, value)
     db.commit()

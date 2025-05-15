@@ -58,24 +58,13 @@ def obtener_medicos(db: Session, skip: int, limit: int) -> list[Medico]:
 
 def eliminar_medico(db: Session, medico_documento: int) -> Medico:
     # Validar existencia del médico
-    medico = db.query(Medico).filter(Medico.documento == medico_documento).first()
-    if not medico:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"El médico con documento {medico_documento} no fue encontrado. Por favor, verifique el documento."
-        )
+    medico = obtener_medico_por_documento(db, medico_documento)
     medico_repository.eliminar_medico(db, medico_documento=medico_documento)
     return medico
 
 def actualizar_medico(db: Session, medico_documento: int, medico_data: MedicoUpdate) -> Medico:
     # Validar existencia del médico
-    medico = db.query(Medico).filter(Medico.documento == medico_documento).first()
-    if not medico:
-        db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"El médico con documento {medico_documento} no fue encontrado. Por favor, verifique el documento."
-        )
+    medico = obtener_medico_por_documento(db, medico_documento)
     # Validar existencia de la especialidad
     especialidad = db.query(Especialidad).filter(Especialidad.id == medico_data.especialidad_id).first()
     if not especialidad:

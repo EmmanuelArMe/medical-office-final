@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.medico import Medico
-from app.schemas.medico import MedicoCreate
+from app.schemas.medico import MedicoCreate, MedicoUpdate
 
 def crear_medico(db: Session, medico: MedicoCreate) -> Medico:
     nuevo_medico = Medico(**medico.model_dump())
@@ -16,12 +16,12 @@ def obtener_medicos(db: Session, skip: int, limit: int) -> list[Medico]:
     return db.query(Medico).offset(skip).limit(limit).all()
 
 def eliminar_medico(db: Session, medico_documento: int) -> Medico:
-    medico = db.query(Medico).filter(Medico.documento == medico_documento).first()
+    medico = obtener_medico_por_documento(db, medico_documento)
     if medico:
         db.delete(medico)
         db.commit()
 
-def actualizar_medico(db: Session, medico: Medico, medico_data: MedicoCreate) -> Medico | None:
+def actualizar_medico(db: Session, medico: Medico, medico_data: MedicoUpdate) -> Medico | None:
     for key, value in medico_data.model_dump().items():
         setattr(medico, key, value)    
     db.commit()

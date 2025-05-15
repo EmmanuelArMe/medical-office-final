@@ -50,32 +50,28 @@ def obtener_historiales_medicos(db: Session, skip: int, limit: int):
 
 def eliminar_historial_medico(db: Session, id: int):
     # Validar existencia del historial médico
-    historial_medico = db.query(HistorialMedico).filter(HistorialMedico.id == id).first()
-    if not historial_medico:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"El historial médico con el id {id} no fue encontrado. Por favor, verifique el id."
-        )
+    historial_medico = obtener_historial_medico_por_id(db, id)
     # Eliminar el historial médico
     historial_medico_repository.eliminar_historial_medico(db, id=id)
     return historial_medico
 
 def actualizar_historial_medico(db: Session, id: int, historial_medico_data: HistorialMedicoUpdate):
+    # Validar existencia del historial médico
+    historial = historial_medico_repository.obtener_historial_medico_por_id(db, id)
+    # Validar existencia del paciente
     paciente_existente = db.query(Paciente).filter(Paciente.id == historial_medico_data.paciente_id).first()
     if not paciente_existente:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"El paciente con el id {historial_medico_data.paciente_id} no fue encontrado."
         )
-
-    historial_existente = historial_medico_repository.obtener_historial_medico_por_id(db, id)
-    if not historial_existente:
+    historial_actualizado = historial_medico_repository.actualizar_historial_medico(db, id, historial, historial_medico_data.model_dump())
+    if not historial_actualizado:
+        db.rollback()
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No se encontró el historial médico con id {id}"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Error al actualizar el historial médico"
         )
-
-    historial_actualizado = historial_medico_repository.actualizar_historial_medico(db, id, historial_existente, historial_medico_data.model_dump())
     return historial_actualizado
 
 

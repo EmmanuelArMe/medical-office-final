@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field, field_validator
 from datetime import datetime
+from typing import Dict, Any, ClassVar
 
 class CitaBase(BaseModel):
     fecha: datetime
@@ -13,6 +14,20 @@ class CitaBase(BaseModel):
         if value is None or (isinstance(value, str) and value.strip() == ""):
             raise ValueError(f"El campo '{info.field_name}' es obligatorio.")
         return value
+    
+    model_config: ClassVar[Dict[str, Any]] = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "fecha": "2023-10-01T10:00:00",
+                    "paciente_id": 1,
+                    "medico_id": 2,
+                    "consultorio_id": 3,
+                    "motivo": "Consulta general"
+                }
+            ]
+        }
+    }
 
 class CitaCreate(CitaBase):
     pass

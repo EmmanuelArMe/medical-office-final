@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.consultorio import Consultorio
-from app.schemas.consultorio import ConsultorioCreate
+from app.schemas.consultorio import ConsultorioCreate, ConsultorioUpdate
 
 def crear_consultorio(db: Session, consultorio_data: ConsultorioCreate) -> Consultorio:
     nuevo_consultorio = Consultorio(**consultorio_data.model_dump())
@@ -21,11 +21,9 @@ def eliminar_consultorio(db: Session, consultorio_id: int) -> Consultorio | None
         db.delete(consultorio)
         db.commit()
 
-def actualizar_consultorio(db: Session, consultorio_id: int, consultorio_data: str) -> Consultorio | None:
-    consultorio = obtener_consultorio_por_id(db, consultorio_id)
-    if consultorio:
-        for key, value in consultorio_data.model_dump().items():
-            setattr(consultorio, key, value)
-        db.commit()
-        db.refresh(consultorio)
+def actualizar_consultorio(db: Session, consultorio: Consultorio, consultorio_data: ConsultorioUpdate) -> Consultorio | None:
+    for key, value in consultorio_data.model_dump().items():
+        setattr(consultorio, key, value)
+    db.commit()
+    db.refresh(consultorio)
     return consultorio
