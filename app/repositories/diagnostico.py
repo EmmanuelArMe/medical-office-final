@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.diagnostico import Diagnostico
-from app.schemas.diagnostico import DiagnosticoCreate
+from app.schemas.diagnostico import DiagnosticoCreate, DiagnosticoUpdate
 
 def crear_diagnostico(db: Session, diagnostico_data: DiagnosticoCreate) -> Diagnostico:
     nuevo_diagnostico = Diagnostico(**diagnostico_data.model_dump())
@@ -21,7 +21,7 @@ def eliminar_diagnostico(db: Session, diagnostico_id: int):
         db.delete(diagnostico)
         db.commit()
 
-def actualizar_diagnostico(db: Session, diagnostico: Diagnostico, diagnostico_data: DiagnosticoCreate) -> Diagnostico | None:
+def actualizar_diagnostico(db: Session, diagnostico: Diagnostico, diagnostico_data: DiagnosticoUpdate) -> Diagnostico | None:
     for key, value in diagnostico_data.model_dump().items():
         setattr(diagnostico, key, value)
     db.commit()

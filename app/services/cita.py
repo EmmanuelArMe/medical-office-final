@@ -1,6 +1,5 @@
 from fastapi import HTTPException, status
-from app.models import Paciente, Medico, Consultorio
-from app.models.cita import Cita
+from app.models import Paciente, Medico, Consultorio, Cita
 from app.schemas.cita import CitaCreate, CitaUpdate
 from sqlalchemy.orm import Session
 from app.repositories import cita as cita_repository
@@ -81,28 +80,17 @@ def obtener_citas(db: Session, skip: int, limit: int):
     return cita_repository.obtener_citas(db, skip, limit)
 
 def eliminar_cita(db: Session, cita_id: int):
-    cita = db.query(Cita).filter(Cita.id == cita_id).first()
-    if not cita:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No se encontró una cita con id {cita_id}"
-        )
-
+    cita = obtener_cita_por_id(db, cita_id)
     cita_repository.eliminar_cita(db, cita_id)
     return cita
 
 
 def actualizar_cita(db: Session, cita_id: int, cita_data: CitaUpdate):
     cita = obtener_cita_por_id(db, cita_id)
-    if not cita:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No se encontró una cita con id {cita_id}"
-        )
-    
     # Validar existencia del paciente
     paciente = db.query(Paciente).filter(Paciente.id == cita_data.paciente_id).first()
     if not paciente:
+        db.rollback()
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"No se encontró un paciente con id {cita_data.paciente_id}"
@@ -111,6 +99,7 @@ def actualizar_cita(db: Session, cita_id: int, cita_data: CitaUpdate):
     # Validar existencia del médico
     medico = db.query(Medico).filter(Medico.id == cita_data.medico_id).first()    
     if not medico:
+        db.rollback()
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"No se encontró un médico con id {cita_data.medico_id}"
@@ -119,14 +108,20 @@ def actualizar_cita(db: Session, cita_id: int, cita_data: CitaUpdate):
     # Validar existencia del consultorio            
     consultorio = db.query(Consultorio).filter(Consultorio.id == cita_data.consultorio_id).first()
     if not consultorio:
+        db.rollback()
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"No se encontró un consultorio con id {cita_data.consultorio_id}"
         )
 
-    if cita:
-        cita_actualizada = cita_repository.actualizar_cita(db, cita, cita_data)
-        return cita_actualizada
+    cita_actualizada = cita_repository.actualizar_cita(db, cita, cita_data)
+    if not cita_actualizada:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Error al actualizar la cita"
+        )
+    return cita_actualizada
 
 def obtener_citas_por_paciente(db: Session, paciente_id: int):
     # Validar existencia del paciente

@@ -7,5 +7,7 @@ class Medicamento(Base):
     id = Column(Integer, primary_key=True)
     nombre = Column(String(100), nullable=False)
     descripcion = Column(Text)
+    precio = Column(Integer, nullable=False)
+    cantidad_disponible = Column(Integer, nullable=False)
 
     recetas = relationship("MedicamentoRecetado", back_populates="medicamento")

@@ -1,11 +1,11 @@
 from pydantic import BaseModel, Field, field_validator
 from typing import Dict, Any, ClassVar
 
-class DiagnosticoBase(BaseModel):
-    descripcion: str = Field(..., description="Descripción del diagnóstico")
-    cita_id: int = Field(..., description="ID de la cita asociada al diagnóstico")
+class ExamenBase(BaseModel):
+    nombre: str = Field(..., description="Nombre del examen")
+    descripcion: str = Field(None, description="Descripción del examen")
 
-    @field_validator("descripcion", "cita_id", mode="before", check_fields=True)
+    @field_validator("nombre", "descripcion", mode="before", check_fields=True)
     def validate_required_fields(cls, value, info):
         if value is None or (isinstance(value, str) and value.strip() == ""):
             raise ValueError(f"El campo '{info.field_name}' es obligatorio.")
@@ -15,21 +15,21 @@ class DiagnosticoBase(BaseModel):
         "json_schema_extra": {
             "examples": [
                 {
-                    "descripcion": "Diagnóstico de prueba",
-                    "cita_id": 1
+                    "nombre": "Examen de sangre",
+                    "descripcion": "Examen para analizar los componentes de la sangre"
                 }
             ]
         }
     }
-
-class DiagnosticoCreate(DiagnosticoBase):
+    
+class ExamenCreate(ExamenBase):
     pass
 
-class DiagnosticoResponse(DiagnosticoBase):
+class ExamenResponse(ExamenBase):
     id: int
 
-class DiagnosticoUpdate(DiagnosticoBase):
+class ExamenUpdate(ExamenBase):
     pass
 
     class Config:
-        from_attributes = True
+        orm_mode = True

@@ -50,24 +50,13 @@ def obtener_diagnosticos(db: Session, skip: int, limit: int):
 
 def eliminar_diagnostico(db: Session, diagnostico_id: int):
     # Validar existencia del diagnóstico
-    diagnostico = db.query(Diagnostico).filter(Diagnostico.id == diagnostico_id).first()
-    if not diagnostico:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No se encontró un diagnóstico con id {diagnostico_id}, por favor, verifique el id."
-        )
+    diagnostico = obtener_diagnostico_por_id(db, diagnostico_id)
     diagnostico_repository.eliminar_diagnostico(db, diagnostico_id)
     return diagnostico
 
 def actualizar_diagnostico(db: Session, diagnostico_id: int, diagnostico_data: DiagnosticoUpdate):
     # Validar existencia del diagnóstico
-    diagnostico = db.query(Diagnostico).filter(Diagnostico.id == diagnostico_id).first()
-    if not diagnostico:
-        db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No se encontró un diagnóstico con id {diagnostico_id}, por favor, verifique el id."
-        )
+    diagnostico = obtener_diagnostico_por_id(db, diagnostico_id)
     # Validar existencia de la cita
     cita = db.query(Cita).filter(Cita.id == diagnostico_data.cita_id).first()
     if not cita:

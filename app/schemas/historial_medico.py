@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field, field_validator
 from datetime import datetime
+from typing import ClassVar, Dict, Any
 
 class HistorialMedicoBase(BaseModel):
     descripcion: str = Field(..., description="Descripción del historial médico")
@@ -11,6 +12,18 @@ class HistorialMedicoBase(BaseModel):
         if value is None or (isinstance(value, str) and value.strip() == ""):
             raise ValueError(f"El campo '{info.field_name}' es obligatorio.")
         return value
+    
+    model_config: ClassVar[Dict[str, Any]] = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "descripcion": "Historial médico de prueba",
+                    "fecha": "2023-10-01T10:00:00",
+                    "paciente_id": 1
+                }
+            ]
+        }
+    }
 
 class HistorialMedicoCreate(HistorialMedicoBase):
     pass

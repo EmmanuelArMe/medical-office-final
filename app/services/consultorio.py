@@ -35,21 +35,18 @@ def obtener_consultorios(db: Session, skip: int = 0, limit: int = 10):
 
 
 def eliminar_consultorio(db: Session, consultorio_id: int):
+    # Validar existencia del consultorio
     consultorio = obtener_consultorio_por_id(db, consultorio_id)
-    if not consultorio:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No se encontró un consultorio con id {consultorio_id}"
-        )
     consultorio_repository.eliminar_consultorio(db, consultorio_id)
     return consultorio
 
 def actualizar_consultorio(db: Session, consultorio_id: int, consultorio_data: ConsultorioUpdate):
     consultorio = obtener_consultorio_por_id(db, consultorio_id)
-    if not consultorio:
+    consultorio_actualizado = consultorio_repository.actualizar_consultorio(db, consultorio, consultorio_data)
+    if not consultorio_actualizado:
+        db.rollback()
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No se encontró un consultorio con id {consultorio_id}"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Error al actualizar el consultorio"
         )
-    consultorio_actualizado = consultorio_repository.actualizar_consultorio(db, consultorio_id, consultorio_data)
     return consultorio_actualizado
