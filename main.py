@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import cita, especialidad, paciente, medico, consultorio, diagnostico, horario_medico, historial_medico, examen, factura, pago, medicamento, medicamento_recetado
+from app.routers import cita, especialidad, paciente, medico, consultorio, diagnostico, horario_medico, historial_medico, examen, factura, pago, medicamento, medicamento_recetado, rol, usuario
 
 app = FastAPI(
     title="Medical Office API",
@@ -22,3 +22,5 @@ app.include_router(factura.router, prefix="/api", tags=["Facturas"])
 app.include_router(pago.router, prefix="/api", tags=["Pagos"])
 app.include_router(medicamento.router, prefix="/api", tags=["Medicamentos"])
 app.include_router(medicamento_recetado.router, prefix="/api", tags=["Medicamentos Recetados"])
+app.include_router(rol.router, prefix="/api", tags=["Rol"])
+app.include_router(usuario.router, prefix="/api", tags=["Usuario"])
