@@ -13,9 +13,37 @@ def obtener_paciente_por_documento(db: Session, documento: int):
     return db.query(Paciente).filter(Paciente.documento == documento).first()
 
 def obtener_pacientes(db: Session, skip: int, limit: int):
-    return db.query(Paciente).offset(skip).limit(limit).all()
+    pacientes = db.query(Paciente).offset(skip).limit(limit).all()
+    # Transformar las instancias en diccionarios con datos desencriptados
+    resultado = []
+    
+    for paciente in pacientes:
+        try:
+            resultado.append({
+                "id": paciente.id,
+                "nombre": paciente.nombre,
+                "apellido": paciente.apellido,
+                "fecha_nacimiento": paciente.fecha_nacimiento,
+                "documento": paciente.documento,
+                "telefono": paciente.telefono,    # Esto usa el property getter
+                "email": paciente.email,          # Esto usa el property getter
+            })
+        except Exception as e:
+            # Si hay error en la desencriptación de algún campo, incluimos el paciente
+            # con los campos problemáticos marcados como [ERROR DE ENCRIPTACIÓN]
+            resultado.append({
+                "id": paciente.id,
+                "nombre": paciente.nombre,
+                "apellido": paciente.apellido,
+                "fecha_nacimiento": paciente.fecha_nacimiento,
+                "documento": paciente.documento,
+                "telefono": "[ERROR DE ENCRIPTACIÓN]" if paciente._telefono else None,
+                "email": "[ERROR DE ENCRIPTACIÓN]" if paciente._email else None,
+            })
+    
+    return resultado
 
-def eliminar_paciente(db: Session, documento: int):
+def eliminar_paciente(db: Session, documento: str):
     paciente = obtener_paciente_por_documento(db, documento)
     if paciente:
         db.delete(paciente)

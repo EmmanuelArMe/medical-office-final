@@ -42,6 +42,8 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('nombre', sa.String(length=100), nullable=False),
     sa.Column('descripcion', sa.Text(), nullable=True),
+    sa.Column('precio', sa.Float(), nullable=True),
+    sa.Column('cantidad', sa.Integer(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('pacientes',

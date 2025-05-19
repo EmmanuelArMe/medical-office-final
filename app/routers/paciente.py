@@ -36,7 +36,7 @@ def crear_paciente(paciente: PacienteCreate, db: Session = Depends(get_db)):
         summary="Obtener paciente por documento",
         description="Obtiene un paciente por su documento de identidad."
 )
-def obtener_paciente_por_documento(documento: int, db: Session = Depends(get_db)):
+def obtener_paciente_por_documento(documento: str, db: Session = Depends(get_db)):
     paciente = service.obtener_paciente_por_documento(db, documento=documento)
     return JSONResponse(
         content={
@@ -62,7 +62,7 @@ def obtener_pacientes(skip: int, limit: int, db: Session = Depends(get_db)):
         summary="Eliminar paciente",
         description="Elimina un paciente por su documento de identidad."
 )
-def eliminar_paciente(documento: int, db: Session = Depends(get_db)):
+def eliminar_paciente(documento: str, db: Session = Depends(get_db)):
     paciente = service.eliminar_paciente(db, documento=documento)
     return JSONResponse(
         content={"message": f"El paciente con el documento {documento} fue eliminado correctamente.", "response": jsonable_encoder(paciente)},
@@ -75,7 +75,7 @@ def eliminar_paciente(documento: int, db: Session = Depends(get_db)):
         summary="Actualizar paciente",
         description="Actualiza un paciente por su documento de identidad."
 )
-def actualizar_paciente(documento: int, paciente: PacienteUpdate, db: Session = Depends(get_db)):
+def actualizar_paciente(documento: str, paciente: PacienteUpdate, db: Session = Depends(get_db)):
     paciente_actualizado = service.actualizar_paciente(db, documento, paciente)
     return JSONResponse(
         content={

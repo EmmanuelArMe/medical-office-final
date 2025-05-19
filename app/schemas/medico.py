@@ -39,5 +39,6 @@ class MedicoResponse(MedicoBase):
 
 class MedicoUpdate(MedicoBase):
     pass
+
     class Config:
         from_attributes = True

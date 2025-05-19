@@ -36,8 +36,8 @@ def crear_medico(medico: MedicoCreate, db: Session = Depends(get_db)):
         summary="Obtener médico por documento",
         description="Obtiene un médico por su documento de identidad."
 )
-def obtener_medico_por_documento(medico_documento: int, db: Session = Depends(get_db)):
-    medico = service.obtener_medico_por_documento(db, medico_documento)
+def obtener_medico_por_documento(documento: str, db: Session = Depends(get_db)):
+    medico = service.obtener_medico_por_documento(db, documento)
     return JSONResponse(
         content={
             "message": "Médico obtenido correctamente",
@@ -67,8 +67,8 @@ def obtener_medicos(skip: int, limit: int, db: Session = Depends(get_db)):
         summary="Eliminar médico",
         description="Elimina un médico por su documento de identidad."
 )
-def eliminar_medico(documento_medico: int, db: Session = Depends(get_db)):
-    medico = service.eliminar_medico(db, documento_medico)
+def eliminar_medico(documento: int, db: Session = Depends(get_db)):
+    medico = service.eliminar_medico(db, documento)
     return JSONResponse(
         content={
             "message": "Médico eliminado correctamente",
@@ -83,8 +83,8 @@ def eliminar_medico(documento_medico: int, db: Session = Depends(get_db)):
         summary="Actualizar médico",
         description="Actualiza un médico por su documento de identidad."
 )
-def actualizar_medico(documento_medico: int, medico: MedicoUpdate, db: Session = Depends(get_db)):
-    medico_actualizado = service.actualizar_medico(db, documento_medico, medico)
+def actualizar_medico(documento: str, medico: MedicoUpdate, db: Session = Depends(get_db)):
+    medico_actualizado = service.actualizar_medico(db, documento, medico)
     return JSONResponse(
         content={
             "message": "Médico actualizado correctamente",
