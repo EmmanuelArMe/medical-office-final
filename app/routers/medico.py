@@ -94,16 +94,16 @@ def actualizar_medico(documento: str, medico: MedicoUpdate, db: Session = Depend
     )
 
 @router.get(
-        "/medicos/especialidad/{especialidad_id}",
+        "/medicos/especialidad/{id}",
         response_model=list[MedicoResponse],
         summary="Obtener médicos por especialidad",
         description="Obtiene una lista de médicos por su especialidad."
 )
-def obtener_medicos_por_especialidad(especialidad_id: int, db: Session = Depends(get_db)):
+def obtener_medicos_por_especialidad(id: int, db: Session = Depends(get_db)):
     return JSONResponse(
         content={
             "message": "Lista de médicos por especialidad obtenida correctamente",
-            "response": jsonable_encoder(service.obtener_medicos_por_especialidad(db, especialidad_id))
+            "response": jsonable_encoder(service.obtener_medicos_por_especialidad(db, id))
         },
         status_code=status.HTTP_200_OK
     )

@@ -91,15 +91,15 @@ def actualizar_horario_medico(id: int, horario: HorarioMedicoUpdate, db: Session
     )
 
 @router.get(
-        "/horarios/medico/{medico_id}",
+        "/horarios/medico/{id}",
         response_model=list[HorarioMedicoResponse],
         summary="Obtener horarios médicos por ID de médico",
         description="Obtiene una lista de horarios médicos por el ID del médico.")
-def obtener_horarios_medicos_por_medico_id(medico_id: int, db: Session = Depends(get_db)):
-    horarios_medicos = service.obtener_horarios_medicos_por_id_medico(db, medico_id)
+def obtener_horarios_medicos_por_medico_id(id: int, db: Session = Depends(get_db)):
+    horarios_medicos = service.obtener_horarios_medicos_por_id_medico(db, id)
     return JSONResponse(
         content={
-            "message": f"Lista de horarios médicos del médico con ID {medico_id} obtenidos correctamente",
+            "message": f"Lista de horarios médicos del médico con ID {id} obtenidos correctamente",
             "response": jsonable_encoder(horarios_medicos)
         },
         status_code=status.HTTP_200_OK

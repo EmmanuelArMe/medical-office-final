@@ -29,13 +29,13 @@ def crear_receta(receta: RecetaCreate, db: Session = Depends(get_db)):
     )
 
 @router.get(
-        "/recetas/{receta_id}",
+        "/recetas/{id}",
         response_model=RecetaResponse,
         summary="Obtener receta por ID",
         description="Obtiene una receta por su ID."
 )
-def obtener_receta_por_id(receta_id: int, db: Session = Depends(get_db)):
-    receta = service.obtener_receta_por_id(db, receta_id)
+def obtener_receta_por_id(id: int, db: Session = Depends(get_db)):
+    receta = service.obtener_receta_por_id(db, id)
     return JSONResponse(
         content={"message": "Receta obtenida correctamente", "response": jsonable_encoder(receta)},
         status_code=status.HTTP_200_OK
@@ -44,7 +44,7 @@ def obtener_receta_por_id(receta_id: int, db: Session = Depends(get_db)):
 @router.get(
         "/recetas",
         response_model=list[RecetaResponse],
-        summary="Obtener recetas",
+        summary="Obtener lista de recetas",
         description="Obtiene una lista de recetas paginada."
 )
 def obtener_recetas(skip: int, limit: int, db: Session = Depends(get_db)):
@@ -55,27 +55,40 @@ def obtener_recetas(skip: int, limit: int, db: Session = Depends(get_db)):
     )
 
 @router.delete(
-        "/recetas/{receta_id}",
+        "/recetas/{id}",
         response_model=RecetaResponse,
         summary="Eliminar receta",
         description="Elimina una receta por su ID."
 )
-def eliminar_receta(receta_id: int, db: Session = Depends(get_db)):
-    receta = service.eliminar_receta(db, receta_id)
+def eliminar_receta(id: int, db: Session = Depends(get_db)):
+    receta = service.eliminar_receta(db, id)
     return JSONResponse(
         content={"message": "Receta eliminada correctamente", "response": jsonable_encoder(receta)},
         status_code=status.HTTP_200_OK
     )
 
 @router.put(
-        "/recetas/{receta_id}",
+        "/recetas/{id}",
         response_model=RecetaResponse,
         summary="Actualizar receta",
         description="Actualiza una receta por su ID."
 )
-def actualizar_receta(receta_id: int, receta_data: RecetaUpdate, db: Session = Depends(get_db)):
-    receta = service.actualizar_receta(db, receta_id, receta_data)
+def actualizar_receta(id: int, receta_data: RecetaUpdate, db: Session = Depends(get_db)):
+    receta = service.actualizar_receta(db, id, receta_data)
     return JSONResponse(
         content={"message": "Receta actualizada correctamente", "response": jsonable_encoder(receta)},
+        status_code=status.HTTP_200_OK
+    )
+    
+@router.get(
+        "/recetas/cita/{id}",
+        response_model=list[RecetaResponse],
+        summary="Obtener recetas por ID de cita",
+        description="Obtiene una lista de recetas por el ID de la cita."
+)
+def obtener_recetas_por_cita(id: int, db: Session = Depends(get_db)):
+    recetas = service.obtener_recetas_por_cita(db, id)
+    return JSONResponse(
+        content={"message": "Lista de recetas obtenida correctamente", "response": jsonable_encoder(recetas)},
         status_code=status.HTTP_200_OK
     )

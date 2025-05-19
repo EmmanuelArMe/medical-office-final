@@ -15,7 +15,7 @@ def obtener_usuario_por_id(db: Session, usuario_id: int):
 def obtener_usuario_por_username(db: Session, username: str):
     return db.query(Usuario).filter(Usuario.username == username).first()
 
-def obtener_usuarios(db: Session, skip: int = 0, limit: int = 100):
+def obtener_usuarios(db: Session, skip: int, limit: int):
     return db.query(Usuario).offset(skip).limit(limit).all()
 
 def eliminar_usuario(db: Session, usuario_id: int):
@@ -30,3 +30,6 @@ def actualizar_usuario(db: Session, usuario: Usuario, usuario_data: UsuarioUpdat
     db.commit()
     db.refresh(usuario)
     return usuario
+
+def obtener_usuario_por_rol(db: Session, rol_id: int):
+    return db.query(Usuario).filter(Usuario.rol_id == rol_id).all()

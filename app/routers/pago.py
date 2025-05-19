@@ -29,13 +29,13 @@ def crear_pago(pago: PagoCreate, db: Session = Depends(get_db)):
     )
 
 @router.get(
-        "/pagos/{pago_id}",
+        "/pagos/{id}",
         response_model=PagoResponse,
         summary="Obtener pago por ID",
         description="Obtiene un pago por su ID."
 )
-def obtener_pago_por_id(pago_id: int, db: Session = Depends(get_db)):
-    pago = service.obtener_pago_por_id(db, pago_id)
+def obtener_pago_por_id(id: int, db: Session = Depends(get_db)):
+    pago = service.obtener_pago_por_id(db, id)
     return JSONResponse(
         content={"message": "Pago obtenido correctamente", "response": jsonable_encoder(pago)},
         status_code=status.HTTP_200_OK
@@ -44,7 +44,7 @@ def obtener_pago_por_id(pago_id: int, db: Session = Depends(get_db)):
 @router.get(
         "/pagos",
         response_model=list[PagoResponse],
-        summary="Obtener pagos",
+        summary="Obtener lista de pagos",
         description="Obtiene una lista de pagos paginada."
 )
 def obtener_pagos(skip: int, limit: int, db: Session = Depends(get_db)):
@@ -55,26 +55,26 @@ def obtener_pagos(skip: int, limit: int, db: Session = Depends(get_db)):
     )
 
 @router.delete(
-        "/pagos/{pago_id}",
+        "/pagos/{id}",
         response_model=PagoResponse,
         summary="Eliminar pago",
         description="Elimina un pago por su ID."
 )
-def eliminar_pago(pago_id: int, db: Session = Depends(get_db)):
-    pago = service.eliminar_pago(db, pago_id)
+def eliminar_pago(id: int, db: Session = Depends(get_db)):
+    pago = service.eliminar_pago(db, id)
     return JSONResponse(
         content={"message": "Pago eliminado correctamente", "response": jsonable_encoder(pago)},
         status_code=status.HTTP_200_OK
     )
 
 @router.put(
-        "/pagos/{pago_id}",
+        "/pagos/{id}",
         response_model=PagoResponse,
         summary="Actualizar pago",
         description="Actualiza un pago por su ID."
 )
-def actualizar_pago(pago_id: int, pago_data: PagoUpdate, db: Session = Depends(get_db)):
-    pago = service.actualizar_pago(db, pago_id, pago_data)
+def actualizar_pago(id: int, pago_data: PagoUpdate, db: Session = Depends(get_db)):
+    pago = service.actualizar_pago(db, id, pago_data)
     return JSONResponse(
         content={"message": "Pago actualizado correctamente", "response": jsonable_encoder(pago)},
         status_code=status.HTTP_200_OK

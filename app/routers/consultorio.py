@@ -30,13 +30,13 @@ def crear_consultorio(consultorio: ConsultorioCreate, db: Session = Depends(get_
 
 
 @router.get(
-        "/consultorios/{consultorio_id}",
+        "/consultorios/{id}",
         response_model=ConsultorioResponse,
         summary="Obtener consultorio por ID",
         description="Obtiene un consultorio por su ID."
 )
-def obtener_consultorio_por_id(consultorio_id: int, db: Session = Depends(get_db)):
-    consultorio = service.obtener_consultorio_por_id(db, consultorio_id)
+def obtener_consultorio_por_id(id: int, db: Session = Depends(get_db)):
+    consultorio = service.obtener_consultorio_por_id(db, id)
     return JSONResponse(
         content={"message": "Consultorio obtenido correctamente", "response": jsonable_encoder(consultorio)},
         status_code=status.HTTP_200_OK
@@ -56,32 +56,32 @@ def Obtener_consultorios(skip: int, limit: int, db: Session = Depends(get_db)):
 
 
 @router.delete(
-        "/consultorios/{consultorio_id}",
+        "/consultorios/{id}",
         response_model=ConsultorioResponse,
         summary="Eliminar consultorio",
         description="Elimina un consultorio por su ID."
 )
-def eliminar_consultorio(consultorio_id: int, db: Session = Depends(get_db)):
-    consultorio = service.eliminar_consultorio(db, consultorio_id)
+def eliminar_consultorio(id: int, db: Session = Depends(get_db)):
+    consultorio = service.eliminar_consultorio(db, id)
     return JSONResponse(
         content={
-            "message": f"Consultorio con ID {consultorio_id} eliminado correctamente",
+            "message": f"Consultorio con ID {id} eliminado correctamente",
             "response": jsonable_encoder(consultorio)
         },
         status_code=status.HTTP_200_OK
     )
 
 @router.put(
-        "/consultorios/{consultorio_id}",
+        "/consultorios/{id}",
         response_model=ConsultorioResponse,
         summary="Actualizar consultorio",
         description="Actualiza un consultorio por su ID."
 )
-def actualizar_consultorio(consultorio_id: int, consultorio: ConsultorioUpdate, db: Session = Depends(get_db)):
-    consultorio_actualizado = service.actualizar_consultorio(db, consultorio_id, consultorio)
+def actualizar_consultorio(id: int, consultorio: ConsultorioUpdate, db: Session = Depends(get_db)):
+    consultorio_actualizado = service.actualizar_consultorio(db, id, consultorio)
     return JSONResponse(
         content={
-            "message": f"Consultorio con ID {consultorio_id} actualizado correctamente",
+            "message": f"Consultorio con ID {id} actualizado correctamente",
             "response": jsonable_encoder(consultorio_actualizado)
         }
     )

@@ -29,13 +29,13 @@ def crear_usuario(usuario: UsuarioCreate, db: Session = Depends(get_db)):
     )
 
 @router.get(
-    "/usuarios/{usuario_id}",
+    "/usuarios/{id}",
     response_model=UsuarioResponse,
     summary="Obtener usuario por ID",
     description="Obtiene un usuario por su ID."
 )
-def obtener_usuario_por_id(usuario_id: int, db: Session = Depends(get_db)):
-    usuario = service.obtener_usuario_por_id(db, usuario_id)
+def obtener_usuario_por_id(id: int, db: Session = Depends(get_db)):
+    usuario = service.obtener_usuario_por_id(db, id)
     return JSONResponse(
         content={"message": "Usuario obtenido correctamente", "response": jsonable_encoder(usuario)},
         status_code=status.HTTP_200_OK
@@ -45,37 +45,50 @@ def obtener_usuario_por_id(usuario_id: int, db: Session = Depends(get_db)):
     "/usuarios",
     response_model=list[UsuarioResponse],
     summary="Obtener lista de usuarios",
-    description="Obtiene una lista de todos los usuarios."
+    description="Obtiene una lista de todos los usuarios paginada."
 )
-def obtener_usuarios(db: Session = Depends(get_db)):
-    usuarios = service.obtener_usuarios(db)
+def obtener_usuarios(skip: int, limit: int, db: Session = Depends(get_db)):
+    usuarios = service.obtener_usuarios(db, skip=skip, limit=limit)
     return JSONResponse(
         content={"message": "Lista de usuarios obtenida correctamente", "response": jsonable_encoder(usuarios)},
         status_code=status.HTTP_200_OK
     )
 
 @router.put(
-    "/usuarios/{usuario_id}",
+    "/usuarios/{id}",
     response_model=UsuarioResponse,
     summary="Actualizar usuario",
     description="Actualiza un usuario por su ID."
 )
-def actualizar_usuario(usuario_id: int, usuario: UsuarioCreate, db: Session = Depends(get_db)):
-    usuario_actualizado = service.actualizar_usuario(db, usuario_id, usuario)
+def actualizar_usuario(id: int, usuario: UsuarioCreate, db: Session = Depends(get_db)):
+    usuario_actualizado = service.actualizar_usuario(db, id, usuario)
     return JSONResponse(
         content={"message": "Usuario actualizado correctamente", "response": jsonable_encoder(usuario_actualizado)},
         status_code=status.HTTP_200_OK
     )
 
 @router.delete(
-    "/usuarios/{usuario_id}",
+    "/usuarios/{id}",
     response_model=UsuarioResponse,
     summary="Eliminar usuario",
     description="Elimina un usuario por su ID."
 )
-def eliminar_usuario(usuario_id: int, db: Session = Depends(get_db)):
-    usuario = service.eliminar_usuario(db, usuario_id)
+def eliminar_usuario(id: int, db: Session = Depends(get_db)):
+    usuario = service.eliminar_usuario(db, id)
     return JSONResponse(
         content={"message": "Usuario eliminado correctamente", "response": jsonable_encoder(usuario)},
+        status_code=status.HTTP_200_OK
+    )
+
+@router.get(
+    "/usuarios/rol/{id}",
+    response_model=list[UsuarioResponse],
+    summary="Obtener usuarios por rol",
+    description="Obtiene una lista de usuarios por su rol."
+)   
+def obtener_usuarios_por_rol(id: int, db: Session = Depends(get_db)):
+    usuarios = service.obtener_usuario_por_rol(db, id)
+    return JSONResponse(
+        content={"message": "Lista de usuarios por rol obtenida correctamente", "response": jsonable_encoder(usuarios)},
         status_code=status.HTTP_200_OK
     )

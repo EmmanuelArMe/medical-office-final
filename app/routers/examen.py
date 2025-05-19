@@ -29,13 +29,13 @@ def crear_examen(examen: ExamenCreate, db: Session = Depends(get_db)):
     )
 
 @router.get(
-        "/examenes/{examen_id}",
+        "/examenes/{id}",
         response_model=ExamenResponse,
         summary="Obtener examen por ID",
         description="Obtiene un examen por su ID."
 )
-def obtener_examen_por_id(examen_id: int, db: Session = Depends(get_db)):
-    examen = service.obtener_examen_por_id(db, examen_id)
+def obtener_examen_por_id(id: int, db: Session = Depends(get_db)):
+    examen = service.obtener_examen_por_id(db, id)
     return JSONResponse(
         content={"message": "Examen obtenido correctamente", "response": jsonable_encoder(examen)},
         status_code=status.HTTP_200_OK
@@ -44,7 +44,7 @@ def obtener_examen_por_id(examen_id: int, db: Session = Depends(get_db)):
 @router.get(
         "/examenes",
         response_model=list[ExamenResponse],
-        summary="Obtener examenes",
+        summary="Obtener lista de examenes",
         description="Obtiene una lista de examenes paginada."
 )
 def obtener_examenes(skip: int, limit: int, db: Session = Depends(get_db)):
@@ -55,27 +55,27 @@ def obtener_examenes(skip: int, limit: int, db: Session = Depends(get_db)):
     )
 
 @router.delete(
-        "/examenes/{examen_id}",
+        "/examenes/{id}",
         response_model=ExamenResponse,
         summary="Eliminar examen",
         description="Elimina un examen por su ID."
 )
-def eliminar_examen(examen_id: int, db: Session = Depends(get_db)):
-    examen = service.eliminar_examen(db, examen_id)
+def eliminar_examen(id: int, db: Session = Depends(get_db)):
+    examen = service.eliminar_examen(db, id)
     return JSONResponse(
-        content={"message": f"Examen con ID {examen_id} eliminado correctamente", "response": jsonable_encoder(examen)},
+        content={"message": f"Examen con ID {id} eliminado correctamente", "response": jsonable_encoder(examen)},
         status_code=status.HTTP_200_OK
     )
 
 @router.put(
-        "/examenes/{examen_id}",
+        "/examenes/{id}",
         response_model=ExamenResponse,
         summary="Actualizar examen",
         description="Actualiza un examen por su ID."
 )
-def actualizar_examen(examen_id: int, examen: ExamenUpdate, db: Session = Depends(get_db)):
-    examen_actualizado = service.actualizar_examen(db, examen_id, examen)
+def actualizar_examen(id: int, examen: ExamenUpdate, db: Session = Depends(get_db)):
+    examen_actualizado = service.actualizar_examen(db, id, examen)
     return JSONResponse(
-        content={"message": f"Examen con ID {examen_id} actualizado correctamente", "response": jsonable_encoder(examen_actualizado)},
+        content={"message": f"Examen con ID {id} actualizado correctamente", "response": jsonable_encoder(examen_actualizado)},
         status_code=status.HTTP_200_OK
     )
