@@ -79,16 +79,3 @@ def actualizar_pago(pago_id: int, pago_data: PagoUpdate, db: Session = Depends(g
         content={"message": "Pago actualizado correctamente", "response": jsonable_encoder(pago)},
         status_code=status.HTTP_200_OK
     )
-
-@router.get(
-        "/pagos/paciente/{paciente_id}",
-        response_model=PagoResponse,
-        summary="Obtener pago por ID de paciente",
-        description="Obtiene un pago por su ID de paciente."
-)
-def obtener_pago_por_paciente_id(paciente_id: int, db: Session = Depends(get_db)):
-    pago = service.obtener_pago_por_paciente_id(db, paciente_id)
-    return JSONResponse(
-        content={"message": "Pago obtenido correctamente", "response": jsonable_encoder(pago)},
-        status_code=status.HTTP_200_OK
-    )

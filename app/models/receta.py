@@ -7,6 +7,5 @@ class Receta(Base):
     id = Column(Integer, primary_key=True)
     cita_id = Column(Integer, ForeignKey("citas.id"))
     instrucciones = Column(Text)
-
     cita = relationship("Cita", back_populates="receta")
     medicamentos = relationship("MedicamentoRecetado", back_populates="receta")
