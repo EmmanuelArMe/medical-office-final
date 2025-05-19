@@ -1,5 +1,8 @@
 from fastapi import FastAPI
+from dotenv import load_dotenv
 from app.routers import cita, especialidad, paciente, medico, consultorio, diagnostico, horario_medico, historial_medico, examen, factura, pago, medicamento, medicamento_recetado, resultado_examen, receta, rol, usuario
+
+load_dotenv()
 
 app = FastAPI(
     title="Medical Office API",

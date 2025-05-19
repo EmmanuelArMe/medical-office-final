@@ -31,15 +31,34 @@ def crear_medico(db: Session, medico_data: MedicoCreate) -> Medico:
         )
     return nuevo_medico
 
-def obtener_medico_por_documento(db: Session, medico_documento: int) -> Medico:
+def obtener_medico_por_documento(db: Session, documento: str) -> Medico:
     # Validar existencia del médico
-    medico = db.query(Medico).filter(Medico.documento == medico_documento).first()
+    medico = medico_repository.obtener_medico_por_documento(db, documento=documento)
     if not medico:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"El médico con documento {medico_documento} no fue encontrado. Por favor, verifique el documento."
+            detail=f"El médico con el documento {documento} no fue encontrado. Por favor, verifique el documento."
         )
-    return medico_repository.obtener_medico_por_documento(db, medico_documento)
+    try:
+        return {
+            "id": medico.id,
+            "nombre": medico.nombre,
+            "apellido": medico.apellido,
+            "especialidad_id": medico.especialidad_id,
+            "documento": medico.documento,
+            "telefono": medico.telefono,  # desencriptado
+            "email": medico.email,        # desencriptado
+        }
+    except Exception:
+        return {
+            "id": medico.id,
+            "nombre": medico.nombre,
+            "apellido": medico.apellido,
+            "especialidad_id": medico.especialidad_id,
+            "documento": medico.documento,
+            "telefono": "[ERROR DE ENCRIPTACIÓN]" if medico._telefono else None,
+            "email": "[ERROR DE ENCRIPTACIÓN]" if medico._email else None,
+        }
 
 def obtener_medicos(db: Session, skip: int, limit: int) -> list[Medico]:
     # Validar existencia de los médicos
@@ -56,15 +75,15 @@ def obtener_medicos(db: Session, skip: int, limit: int) -> list[Medico]:
         )
     return medico_repository.obtener_medicos(db, skip=skip, limit=limit)
 
-def eliminar_medico(db: Session, medico_documento: int) -> Medico:
+def eliminar_medico(db: Session, documento: str) -> Medico:
     # Validar existencia del médico
-    medico = obtener_medico_por_documento(db, medico_documento)
-    medico_repository.eliminar_medico(db, medico_documento=medico_documento)
+    medico = obtener_medico_por_documento(db, documento)
+    medico_repository.eliminar_medico(db, documento=documento)
     return medico
 
-def actualizar_medico(db: Session, medico_documento: int, medico_data: MedicoUpdate) -> Medico:
+def actualizar_medico(db: Session, documento: str, medico_data: MedicoUpdate) -> Medico:
     # Validar existencia del médico
-    medico = obtener_medico_por_documento(db, medico_documento)
+    medico = medico_repository.obtener_medico_por_documento(db, documento=documento)
     # Validar existencia de la especialidad
     especialidad = db.query(Especialidad).filter(Especialidad.id == medico_data.especialidad_id).first()
     if not especialidad:
@@ -73,6 +92,14 @@ def actualizar_medico(db: Session, medico_documento: int, medico_data: MedicoUpd
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"La especialidad con ID {medico_data.especialidad_id} no existe"
         )
+    # Validar existencia del medico con el mismo documento
+    medico_existente = db.query(Medico).filter(Medico.documento == medico_data.documento).first()
+    if medico_existente:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Ya existe un médico con el documento {medico_data.documento}"
+        )
     medico_actualizado = medico_repository.actualizar_medico(db, medico, medico_data)
     if not medico_actualizado:
         db.rollback()
@@ -80,7 +107,26 @@ def actualizar_medico(db: Session, medico_documento: int, medico_data: MedicoUpd
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Error al actualizar el médico"
         )
-    return medico_actualizado
+    try:
+        return {
+            "id": medico_actualizado.id,
+            "nombre": medico_actualizado.nombre,
+            "apellido": medico_actualizado.apellido,
+            "especialidad_id": medico_actualizado.especialidad_id,
+            "documento": medico_actualizado.documento,
+            "telefono": medico_actualizado.telefono,  # desencriptado
+            "email": medico_actualizado.email,        # desencriptado
+        }
+    except Exception:
+        return {
+            "id": medico_actualizado.id,
+            "nombre": medico_actualizado.nombre,
+            "apellido": medico_actualizado.apellido,
+            "especialidad_id": medico_actualizado.especialidad_id,
+            "documento": medico_actualizado.documento,
+            "telefono": "[ERROR DE ENCRIPTACIÓN]" if medico_actualizado._telefono else None,
+            "email": "[ERROR DE ENCRIPTACIÓN]" if medico_actualizado._email else None,
+        }
 
 def obtener_medicos_por_especialidad(db: Session, especialidad_id: int) -> list[Medico]:
     # Validar existencia de la especialidad
