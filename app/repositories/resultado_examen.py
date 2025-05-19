@@ -12,7 +12,7 @@ def crear_resultado_examen(db: Session, resultado_examen: ResultadoExamenCreate)
 def obtener_resultado_examen_por_id(db: Session, resultado_examen_id: int) -> ResultadoExamen | None:
     return db.query(ResultadoExamen).filter(ResultadoExamen.id == resultado_examen_id).first()
 
-def obtener_resultado_examen(db: Session, skip: int, limit: int) -> list[ResultadoExamen]:
+def obtener_resultados_examenes(db: Session, skip: int, limit: int) -> list[ResultadoExamen]:
     return db.query(ResultadoExamen).offset(skip).limit(limit).all()
 
 def eliminar_resultado_examen(db: Session, resultado_examen_id: int) -> ResultadoExamen | None:
@@ -28,5 +28,8 @@ def actualizar_resultado_examen(db: Session, resultado_examen: ResultadoExamen, 
     db.refresh(resultado_examen)
     return resultado_examen
 
-def obtener_resultado_examen_por_paciente_id(db: Session, paciente_id: int) -> ResultadoExamen | None:
-    return db.query(ResultadoExamen).filter(ResultadoExamen.paciente_id == paciente_id).first()
+def obtener_resultados_examenes_por_paciente(db: Session, paciente_id: int) -> list[ResultadoExamen]:
+    return db.query(ResultadoExamen).filter(ResultadoExamen.paciente_id == paciente_id).all()
+
+def obtener_resultados_examenes_por_examen(db: Session, examen_id: int) -> list[ResultadoExamen]:
+    return db.query(ResultadoExamen).filter(ResultadoExamen.examen_id == examen_id).all()

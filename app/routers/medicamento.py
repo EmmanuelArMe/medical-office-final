@@ -29,13 +29,13 @@ def crear_medicamento(medicamento: MedicamentoCreate, db: Session = Depends(get_
     )
 
 @router.get(
-        "/medicamentos/{medicamento_id}",
+        "/medicamentos/{id}",
         response_model=MedicamentoResponse,
         summary="Obtener medicamento por ID",
         description="Obtiene un medicamento por su ID."
 )
-def obtener_medicamento_por_id(medicamento_id: int, db: Session = Depends(get_db)):
-    medicamento = service.obtener_medicamento_por_id(db, medicamento_id)
+def obtener_medicamento_por_id(id: int, db: Session = Depends(get_db)):
+    medicamento = service.obtener_medicamento_por_id(db, id)
     return JSONResponse(
         content={"message": "Medicamento obtenido correctamente", "response": jsonable_encoder(medicamento)},
         status_code=status.HTTP_200_OK
@@ -44,7 +44,7 @@ def obtener_medicamento_por_id(medicamento_id: int, db: Session = Depends(get_db
 @router.get(
         "/medicamentos",
         response_model=list[MedicamentoResponse],
-        summary="Obtener medicamentos",
+        summary="Obtener lista de medicamentos",
         description="Obtiene una lista de medicamentos paginada."
 )
 def obtener_medicamentos(skip: int, limit: int, db: Session = Depends(get_db)):
@@ -55,25 +55,25 @@ def obtener_medicamentos(skip: int, limit: int, db: Session = Depends(get_db)):
     )
 
 @router.delete(
-        "/medicamentos/{medicamento_id}",
+        "/medicamentos/{id}",
         response_model=MedicamentoResponse,
         summary="Eliminar medicamento",
         description="Elimina un medicamento por su ID."
 )
-def eliminar_medicamento(medicamento_id: int, db: Session = Depends(get_db)):
-    medicamento = service.eliminar_medicamento(db, medicamento_id)
+def eliminar_medicamento(id: int, db: Session = Depends(get_db)):
+    medicamento = service.eliminar_medicamento(db, id)
     return JSONResponse(
         content={"message": "Medicamento eliminado correctamente", "response": jsonable_encoder(medicamento)},
         status_code=status.HTTP_200_OK
     )
 @router.put(
-        "/medicamentos/{medicamento_id}",
+        "/medicamentos/{id}",
         response_model=MedicamentoResponse,
         summary="Actualizar medicamento",
         description="Actualiza un medicamento por su ID."
 )
-def actualizar_medicamento(medicamento_id: int, medicamento_data: MedicamentoUpdate, db: Session = Depends(get_db)):
-    medicamento_actualizado = service.actualizar_medicamento(db, medicamento_id, medicamento_data)
+def actualizar_medicamento(id: int, medicamento_data: MedicamentoUpdate, db: Session = Depends(get_db)):
+    medicamento_actualizado = service.actualizar_medicamento(db, id, medicamento_data)
     return JSONResponse(
         content={"message": "Medicamento actualizado correctamente", "response": jsonable_encoder(medicamento_actualizado)},
         status_code=status.HTTP_200_OK

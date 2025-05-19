@@ -29,13 +29,13 @@ def crear_especialidad(especialidad: EspecialidadCreate, db: Session = Depends(g
     )
 
 @router.get(
-        "/especialidades/{especialidad_id}",
+        "/especialidades/{id}",
         response_model=EspecialidadResponse,
         summary="Obtener especialidad por ID",
         description="Obtiene una especialidad por su ID."
 )
-def obtener_especialidad_por_id(especialidad_id: int, db: Session = Depends(get_db)):
-    especialidad = service.obtener_especialidad_por_id(db, especialidad_id)
+def obtener_especialidad_por_id(id: int, db: Session = Depends(get_db)):
+    especialidad = service.obtener_especialidad_por_id(db, id)
     return JSONResponse(
         content={"message": "Especialidad obtenida correctamente", "response": jsonable_encoder(especialidad)},
         status_code=status.HTTP_200_OK
@@ -55,27 +55,27 @@ def obtener_especialidades(skip: int, limit: int, db: Session = Depends(get_db))
     )
 
 @router.delete(
-        "/especialidades/{especialidad_id}",
+        "/especialidades/{id}",
         response_model=EspecialidadResponse,
         summary="Eliminar especialidad",
         description="Elimina una especialidad por su ID."
 )
-def eliminar_especialidad(especialidad_id: int, db: Session = Depends(get_db)):
-    especialidad_eliminada = service.eliminar_especialidad(db, especialidad_id)
+def eliminar_especialidad(id: int, db: Session = Depends(get_db)):
+    especialidad_eliminada = service.eliminar_especialidad(db, id)
     return JSONResponse(
-        content={"message": f"Especialidad con ID {especialidad_id} eliminada correctamente", "response": jsonable_encoder(especialidad_eliminada)},
+        content={"message": f"Especialidad con ID {id} eliminada correctamente", "response": jsonable_encoder(especialidad_eliminada)},
         status_code=status.HTTP_200_OK
     )
 
 @router.put(
-        "/especialidades/{especialidad_id}",
+        "/especialidades/{id}",
         response_model=EspecialidadResponse,
         summary="Actualizar especialidad",
         description="Actualiza una especialidad por su ID."
 )
-def actualizar_especialidad(especialidad_id: int, especialidad: EspecialidadUpdate, db: Session = Depends(get_db)):
-    especialidad_actualizada = service.actualizar_especialidad(db, especialidad_id, especialidad)
+def actualizar_especialidad(id: int, especialidad: EspecialidadUpdate, db: Session = Depends(get_db)):
+    especialidad_actualizada = service.actualizar_especialidad(db, id, especialidad)
     return JSONResponse(
-        content={"message": f"Especialidad con ID {especialidad_id} actualizada correctamente", "response": jsonable_encoder(especialidad_actualizada)},
+        content={"message": f"Especialidad con ID {id} actualizada correctamente", "response": jsonable_encoder(especialidad_actualizada)},
         status_code=status.HTTP_200_OK
     )

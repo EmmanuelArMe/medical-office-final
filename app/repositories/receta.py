@@ -27,3 +27,6 @@ def actualizar_receta(db: Session, receta: Receta, receta_data: RecetaUpdate) ->
     db.commit()
     db.refresh(receta)
     return receta
+
+def obtener_recetas_por_cita(db: Session, cita_id: int) -> list[Receta]:
+    return db.query(Receta).filter(Receta.cita_id == cita_id).all()

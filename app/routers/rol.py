@@ -29,13 +29,13 @@ def crear_rol(rol: RolCreate, db: Session = Depends(get_db)):
     )
 
 @router.get(
-        "/roles/{rol_id}",
+        "/roles/{id}",
         response_model=RolResponse,
         summary="Obtener rol por ID",
         description="Obtiene un rol por su ID."
 )
-def obtener_rol_por_id(rol_id: int, db: Session = Depends(get_db)):
-    rol = service.obtener_rol_por_id(db, rol_id)
+def obtener_rol_por_id(id: int, db: Session = Depends(get_db)):
+    rol = service.obtener_rol_por_id(db, id)
     return JSONResponse(
         content={"message": "rol obtenido correctamente", "response": jsonable_encoder(rol)},
         status_code=status.HTTP_200_OK
@@ -44,7 +44,7 @@ def obtener_rol_por_id(rol_id: int, db: Session = Depends(get_db)):
 @router.get(
         "/roles",
         response_model=list[RolResponse],
-        summary="Obtener roles",
+        summary="Obtener lista de roles",
         description="Obtiene una lista de roles paginada."
 )
 def obtener_roles(skip: int, limit: int, db: Session = Depends(get_db)):
@@ -55,27 +55,27 @@ def obtener_roles(skip: int, limit: int, db: Session = Depends(get_db)):
     )
 
 @router.delete(
-        "/roles/{rol_id}",
+        "/roles/{id}",
         response_model=RolResponse,
         summary="Eliminar rol",
         description="Elimina un rol por su ID."
 )
-def eliminar_rol(rol_id: int, db: Session = Depends(get_db)):
-    rol = service.eliminar_rol(db, rol_id)
+def eliminar_rol(id: int, db: Session = Depends(get_db)):
+    rol = service.eliminar_rol(db, id)
     return JSONResponse(
-        content={"message": f"rol con ID {rol_id} eliminado correctamente", "response": jsonable_encoder(rol)},
+        content={"message": f"rol con ID {id} eliminado correctamente", "response": jsonable_encoder(rol)},
         status_code=status.HTTP_200_OK
     )
 
 @router.put(
-        "/roles/{rol_id}",
+        "/roles/{id}",
         response_model=RolResponse,
         summary="Actualizar rol",
         description="Actualiza un rol por su ID."
 )
-def actualizar_rol(rol_id: int, rol: RolUpdate, db: Session = Depends(get_db)):
-    rol_actualizado = service.actualizar_rol(db, rol_id, rol)
+def actualizar_rol(id: int, rol: RolUpdate, db: Session = Depends(get_db)):
+    rol_actualizado = service.actualizar_rol(db, id, rol)
     return JSONResponse(
-        content={"message": f"rol con ID {rol_id} actualizado correctamente", "response": jsonable_encoder(rol_actualizado)},
+        content={"message": f"rol con ID {id} actualizado correctamente", "response": jsonable_encoder(rol_actualizado)},
         status_code=status.HTTP_200_OK
     )

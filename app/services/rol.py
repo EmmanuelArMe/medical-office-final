@@ -30,14 +30,24 @@ def obtener_rol_por_id(db: Session, rol_id: int):
         )
     return rol_repository.obtener_rol_por_id(db, rol_id)
 
-def obtener_roles(db: Session):
+def obtener_roles(db: Session, skip: int, limit: int):
     roles = db.query(Rol).all()
     if not roles:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="No se encontraron roles."
         )
-    return rol_repository.obtener_roles(db)
+    if skip < 0 or limit <= 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Los parámetros 'skip' y 'limit' deben ser mayores o iguales a 0 y 1 respectivamente."
+        )
+    return rol_repository.obtener_roles(db, skip=skip, limit=limit)
+
+def eliminar_rol(db: Session, rol_id: int):
+    rol = obtener_rol_por_id(db, rol_id)
+    rol_repository.eliminar_rol(db, rol_id)
+    return rol
 
 def actualizar_rol(db: Session, rol_id: int, rol_data: RolUpdate):
     rol = obtener_rol_por_id(db, rol_id)
@@ -48,8 +58,3 @@ def actualizar_rol(db: Session, rol_id: int, rol_data: RolUpdate):
             detail="Error al actualizar el rol"
         )
     return rol_actualizado
-
-def eliminar_rol(db: Session, rol_id: int):
-    rol = obtener_rol_por_id(db, rol_id)
-    rol_repository.eliminar_rol(db, rol_id)
-    return rol
