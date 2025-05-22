@@ -2,18 +2,16 @@ from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from fastapi.encoders import jsonable_encoder
+
 from app.schemas.medicamento_recetado import MedicamentoRecetadoCreate, MedicamentoRecetadoResponse, MedicamentoRecetadoUpdate
 from app.services import medicamento_recetado as service
-from app.db.database import SessionLocal
+from app.db.database import get_db # Corrected import
+from app.utils.auth import get_current_user
+from app.models.usuario import Usuario # For type hinting current_user
 
 router = APIRouter()
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+# Removed local get_db definition
 
 @router.post(
         "/medicamentos_recetados",
@@ -21,7 +19,7 @@ def get_db():
         summary="Crear medicamento recetado",
         description="Crea un nuevo medicamento recetado en el sistema."
 )
-def crear_medicamento_recetado(medicamento_recetado: MedicamentoRecetadoCreate, db: Session = Depends(get_db)):
+def crear_medicamento_recetado(medicamento_recetado: MedicamentoRecetadoCreate, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
     nuevo_medicamento_recetado = service.crear_medicamento_recetado(db, medicamento_recetado)
     return JSONResponse(
         content={"message": "Medicamento recetado creado correctamente", "response": jsonable_encoder(nuevo_medicamento_recetado)},
@@ -34,7 +32,7 @@ def crear_medicamento_recetado(medicamento_recetado: MedicamentoRecetadoCreate, 
         summary="Obtener medicamento recetado por ID",
         description="Obtiene un medicamento recetado por su ID."
 )
-def obtener_medicamento_recetado_por_id(id: int, db: Session = Depends(get_db)):
+def obtener_medicamento_recetado_por_id(id: int, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
     medicamento_recetado = service.obtener_medicamento_recetado_por_id(db, id)
     return JSONResponse(
         content={"message": "Medicamento recetado obtenido correctamente", "response": jsonable_encoder(medicamento_recetado)},
@@ -47,7 +45,7 @@ def obtener_medicamento_recetado_por_id(id: int, db: Session = Depends(get_db)):
         summary="Obtener lista de medicamentos recetados",
         description="Obtiene una lista de medicamentos recetados paginada."
 )
-def obtener_medicamentos_recetados(skip: int, limit: int, db: Session = Depends(get_db)):
+def obtener_medicamentos_recetados(skip: int, limit: int, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
     return JSONResponse( 
         content={"message": "Lista de medicamentos recetados obtenida correctamente", "response": jsonable_encoder(service.obtener_medicamentos_recetados(db, skip, limit))},
         status_code=status.HTTP_200_OK
@@ -59,7 +57,7 @@ def obtener_medicamentos_recetados(skip: int, limit: int, db: Session = Depends(
         summary="Eliminar medicamento recetado",
         description="Elimina un medicamento recetado por su ID."
 )
-def eliminar_medicamento_recetado(id: int, db: Session = Depends(get_db)):
+def eliminar_medicamento_recetado(id: int, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
     medicamento_recetado = service.eliminar_medicamento_recetado(db, id)
     return JSONResponse(
         content={"message": "Medicamento recetado eliminado correctamente", "response": jsonable_encoder(medicamento_recetado)},
@@ -72,7 +70,7 @@ def eliminar_medicamento_recetado(id: int, db: Session = Depends(get_db)):
         summary="Actualizar medicamento recetado",
         description="Actualiza un medicamento recetado por su ID."
 )
-def actualizar_medicamento_recetado(id: int, medicamento_recetado: MedicamentoRecetadoUpdate, db: Session = Depends(get_db)):
+def actualizar_medicamento_recetado(id: int, medicamento_recetado: MedicamentoRecetadoUpdate, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
     medicamento_recetado_actualizado = service.actualizar_medicamento_recetado(db, id, medicamento_recetado)
     return JSONResponse(
         content={"message": "Medicamento recetado actualizado correctamente", "response": jsonable_encoder(medicamento_recetado_actualizado)},
@@ -85,7 +83,7 @@ def actualizar_medicamento_recetado(id: int, medicamento_recetado: MedicamentoRe
         summary="Obtener medicamentos recetados por receta",
         description="Obtiene una lista de medicamentos recetados por el ID de la receta."
 )
-def obtener_medicamentos_recetados_por_receta(id: int, db: Session = Depends(get_db)):
+def obtener_medicamentos_recetados_por_receta(id: int, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
     medicamentos_recetados = service.obtener_medicamentos_recetados_por_receta(db, id)
     return JSONResponse(
         content={"message": "Lista de medicamentos recetados obtenida correctamente", "response": jsonable_encoder(medicamentos_recetados)},
@@ -98,7 +96,7 @@ def obtener_medicamentos_recetados_por_receta(id: int, db: Session = Depends(get
         summary="Obtener medicamentos recetados por medicamento",
         description="Obtiene una lista de medicamentos recetados por el ID del medicamento."
 )
-def obtener_medicamentos_recetados_por_medicamento(id: int, db: Session = Depends(get_db)):
+def obtener_medicamentos_recetados_por_medicamento(id: int, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
     medicamentos_recetados = service.obtener_medicamentos_recetados_por_medicamento(db, id)
     return JSONResponse(
         content={"message": "Lista de medicamentos recetados obtenida correctamente", "response": jsonable_encoder(medicamentos_recetados)},

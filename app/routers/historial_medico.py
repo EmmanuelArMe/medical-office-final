@@ -1,19 +1,17 @@
 from fastapi import APIRouter, Depends, status
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
-from app.db.database import SessionLocal
+from fastapi.responses import JSONResponse
+
+from app.db.database import get_db # Corrected import
 from app.schemas.historial_medico import HistorialMedicoCreate, HistorialMedicoResponse, HistorialMedicoUpdate
 from app.services import historial_medico as service
-from fastapi.responses import JSONResponse
+from app.utils.auth import get_current_user
+from app.models.usuario import Usuario # For type hinting current_user
 
 router = APIRouter()
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+# Removed local get_db definition
 
 @router.post(
         "/historiales",
@@ -21,7 +19,7 @@ def get_db():
         summary="Crear historial médico",
         description="Crea un nuevo historial médico en el sistema."
 )
-def crear_historial_medico(historial: HistorialMedicoCreate, db: Session = Depends(get_db)):
+def crear_historial_medico(historial: HistorialMedicoCreate, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
     nuevo_historial_medico = service.crear_historial_medico(db, historial)
     return JSONResponse(
         content={
@@ -37,7 +35,7 @@ def crear_historial_medico(historial: HistorialMedicoCreate, db: Session = Depen
         summary="Obtener historial médico por ID",
         description="Obtiene un historial médico por su ID."
 )
-def obtener_historial_medico_por_id(id: int, db: Session = Depends(get_db)):
+def obtener_historial_medico_por_id(id: int, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
     historial_medico = service.obtener_historial_medico_por_id(db, id)
     return JSONResponse(
         content={
@@ -53,7 +51,7 @@ def obtener_historial_medico_por_id(id: int, db: Session = Depends(get_db)):
         summary="Obtener lista de historiales médicos",
         description="Obtiene una lista de historiales médicos paginada."
 )
-def obtener_historiales_medicos(skip: int, limit: int, db: Session = Depends(get_db)):
+def obtener_historiales_medicos(skip: int, limit: int, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
     return JSONResponse(
         content={
             "message": "Lista de historiales médicos obtenidos correctamente",
@@ -68,7 +66,7 @@ def obtener_historiales_medicos(skip: int, limit: int, db: Session = Depends(get
         summary="Eliminar historial médico",
         description="Elimina un historial médico por su ID."
 )
-def eliminar_historial_medico(id: int, db: Session = Depends(get_db)):
+def eliminar_historial_medico(id: int, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
     historial_medico = service.eliminar_historial_medico(db, id)
     return JSONResponse(
         content={
@@ -84,7 +82,7 @@ def eliminar_historial_medico(id: int, db: Session = Depends(get_db)):
         summary="Actualizar historial médico",
         description="Actualiza un historial médico por su ID."
 )
-def actualizar_historial_medico(id: int, historial: HistorialMedicoUpdate, db: Session = Depends(get_db)):
+def actualizar_historial_medico(id: int, historial: HistorialMedicoUpdate, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
     historial_medico_actualizado = service.actualizar_historial_medico(db, id, historial)
     if historial_medico_actualizado:
         return JSONResponse(
@@ -101,7 +99,7 @@ def actualizar_historial_medico(id: int, historial: HistorialMedicoUpdate, db: S
         summary="Obtener historiales médicos por ID de paciente",
         description="Obtiene una lista de historiales médicos por el ID del paciente."
 )
-def obtener_historiales_medicos_por_id_paciente(id: int, db: Session = Depends(get_db)):
+def obtener_historiales_medicos_por_id_paciente(id: int, db: Session = Depends(get_db), current_user: Usuario = Depends(get_current_user)):
     historial_medico = service.obtener_historiales_medicos_por_id_paciente(db, id)
     return JSONResponse(
         content={
